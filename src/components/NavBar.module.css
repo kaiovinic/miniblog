@@ -8,6 +8,10 @@
 
 .brand {
   font-size: 1.2em;
+}
+
+.brand span {
+  font-weight: 900;
   text-transform: uppercase;
 }
 
@@ -16,7 +20,7 @@
   list-style: none;
 }
 
-.links_list {
+.links_list li {
   margin-right: 1em;
 }
 
