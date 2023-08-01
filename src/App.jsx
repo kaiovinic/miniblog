@@ -15,11 +15,11 @@ import Post from "./pages/Post/Post";
 // components
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import CreatePost from "./pages/createPost/CreatePost";
+import CreatePost from "./pages/CreatePost/CreatePost";
 import Search from "./pages/search/Search";
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
-import Dashboard from "./pages/dashboard/dashboard";
+import Dashboard from "./pages/Dashboard/dashboard";
 import EditPost from "./pages/EditPost/EditPost";
 
 // context
