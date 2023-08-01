@@ -1,114 +1,103 @@
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  updateProfile,
-  signOut,
-} from "firebase/auth";
+import styles from "./Register.module.css";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useAuthentication } from "../../hooks/useAuthentication";
 
-export const useAuthentication = () => {
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(null);
+const Register = () => {
+  const [displayName, setDisplayName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
 
-  // deal with memory leak
-  const [cancelled, setCancelled] = useState(false);
+  const { createUser, error: authError, loading } = useAuthentication();
 
-  const auth = getAuth();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  function checkIfIsCancelled() {
-    if (cancelled) {
+    setError("");
+
+    const user = {
+      displayName,
+      email,
+      password,
+    };
+
+    if (password !== confirmPassword) {
+      setError("As senhas precisam ser iguais.");
       return;
     }
-  }
 
-  const createUser = async (data) => {
-    checkIfIsCancelled();
+    const res = await createUser(user);
 
-    setLoading(true);
-
-    try {
-      const { user } = await createUserWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password
-      );
-
-      await updateProfile(user, {
-        displayName: data.displayName,
-      });
-
-      return user;
-    } catch (error) {
-      console.log(error.message);
-      console.log(typeof error.message);
-
-      let systemErrorMessage;
-
-      if (error.message.includes("Password")) {
-        systemErrorMessage = "A senha precisa conter pelo menos 6 caracteres.";
-      } else if (error.message.includes("email-already")) {
-        systemErrorMessage = "E-mail já cadastrado.";
-      } else {
-        systemErrorMessage = "Ocorreu um erro, por favor tenta mais tarde.";
-      }
-
-      setError(systemErrorMessage);
-    }
-
-    setLoading(false);
-  };
-
-  const logout = () => {
-    checkIfIsCancelled();
-
-    signOut(auth);
-  };
-
-  const login = async (data) => {
-    checkIfIsCancelled();
-
-    setLoading(true);
-    setError(false);
-
-    try {
-      await signInWithEmailAndPassword(auth, data.email, data.password);
-    } catch (error) {
-      console.log(error.message);
-      console.log(typeof error.message);
-      console.log(error.message.includes("user-not"));
-
-      let systemErrorMessage;
-
-      if (error.message.includes("user-not-found")) {
-        systemErrorMessage = "Usuário não encontrado.";
-      } else if (error.message.includes("wrong-password")) {
-        systemErrorMessage = "Senha incorreta.";
-      } else {
-        systemErrorMessage = "Ocorreu um erro, por favor tenta mais tarde.";
-      }
-
-      console.log(systemErrorMessage);
-
-      setError(systemErrorMessage);
-    }
-
-    console.log(error);
-
-    setLoading(false);
+    console.log(res);
   };
 
   useEffect(() => {
-    return () => setCancelled(true);
-  }, []);
+    if (authError) {
+      setError(authError);
+    }
+  }, [authError]);
 
-  return {
-    auth,
-    createUser,
-    error,
-    logout,
-    login,
-    loading,
-  };
+  return (
+    <div className={styles.register}>
+      <h1>Cadastre-se para postar</h1>
+      <p>Crie seu usuário e compartilhe suas histórias</p>
+      <form onSubmit={handleSubmit}>
+        <label>
+          <span>Nome:</span>
+          <input
+            type="text"
+            name="displayName"
+            required
+            placeholder="Nome do usuário"
+            onChange={(e) => setDisplayName(e.target.value)}
+            value={displayName}
+          />
+        </label>
+        <label>
+          <span>E-mail:</span>
+          <input
+            type="email"
+            name="email"
+            required
+            placeholder="E-mail do usuário"
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
+          />
+        </label>
+        <label>
+          <span>Senha:</span>
+          <input
+            type="password"
+            name="password"
+            required
+            placeholder="Insira a senha"
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
+          />
+        </label>
+        <label>
+          <span>Confirmação de senha:</span>
+          <input
+            type="password"
+            name="confirmPassword"
+            required
+            placeholder="Confirme a senha"
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            value={confirmPassword}
+          />
+        </label>
+        {!loading && <button className="btn">Entrar</button>}
+        {loading && (
+          <button className="btn" disabled>
+            Aguarde...
+          </button>
+        )}
+        {error && <p className="error">{error}</p>}
+      </form>
+    </div>
+  );
 };
+
+export default Register;
