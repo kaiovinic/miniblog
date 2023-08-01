@@ -13,17 +13,17 @@ import About from "./pages/About/About";
 import Post from "./pages/Post/Post";
 
 // components
-import Navbar from "./components/Navbar";
+import Navbar from "./components/NavBar";
 import Footer from "./components/Footer";
 import CreatePost from "./pages/CreatePost/CreatePost";
-import Search from "./pages/search/Search";
+import Search from "./pages/Search/Search";
 import Login from "./pages/Login/Login";
-import Register from "./pages/register/Register";
-import Dashboard from "./pages/Dashboard/dashboard";
+import Register from "./pages/Register/Register";
+import Dashboard from "./pages/Dashboard/Dashboard";
 import EditPost from "./pages/EditPost/EditPost";
 
 // context
-import { AuthProvider } from "./contexts/AuthContext";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   const [user, setUser] = useState(undefined);
